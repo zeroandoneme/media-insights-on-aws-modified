@@ -10,6 +10,7 @@ Media Insights on AWS has been successfully used in a variety of scenarios, such
 * Transforming video content with redaction
 * Indexing videos based on visual and audio content
 * Translating videos for automated localization
+* Translating a VTT or SRT file
 
 For additional details and sample use cases, refer to [How to Rapidly Prototype Multimedia Applications on AWS with the Media Insights on AWS](https://aws.amazon.com/blogs/media/how-to-rapidly-prototype-multimedia-applications-on-aws-with-the-media-insights-engine/) on the AWS Media blog.
 
@@ -21,9 +22,8 @@ You can deploy Media Insights on AWS in your AWS account with the following Clou
 
 Region| Launch
 ------|-----
-US East (N. Virginia) | [![Launch in us-east-1](docs/assets/images/launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=mi&templateURL=https://solutions-reference.s3.amazonaws.com/media-insights-on-aws/latest/media-insights-on-aws-stack.template)
-US West (Oregon) | [![Launch in us-west-2](docs/assets/images/launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=mi&templateURL=https://solutions-reference.s3.amazonaws.com/media-insights-on-aws/latest/media-insights-on-aws-stack.template)
-EU West (Ireland) | [![Launch in eu-west-1](docs/assets/images/launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=mi&templateURL=https://solutions-reference.s3.amazonaws.com/media-insights-on-aws/latest/media-insights-on-aws-stack.template)
+US West (Oregon) | [![Launch in us-west-2](docs/assets/images/launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=mi&templateURL=https://zeroandone-solutions.s3.us-west-2.amazonaws.com/content-localization-on-aws-modified/media-insights/v0.0/media-insights-stack.yaml)
+EU West (Ireland) | [![Launch in eu-west-1](docs/assets/images/launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=mi&templateURL=https://zero-and-one-solutions-eu-west-1.s3.eu-west-1.amazonaws.com/content-localization-on-aws-modified/media-insights/v0.0/media-insights-stack.yaml)
 
 The Cloud Formation options for these one-click deploys are described in the [installation parameters](#installation-parameters) section.
 
