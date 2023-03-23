@@ -2,7 +2,7 @@
 
 ![Media Insights on AWS logo](docs/assets/images/MI_logo.png)
 
-Media Insights on AWS is a development framework for building serverless applications that process video, images, audio, and text  on AWS. It takes care of workflow orchestration and data persistence so that you can focus on workflow development. By addressing the concerns of running workflows, Media Insights on AWS empowers you to build applications faster with the benefit of inheriting a pre-built and robust back end.
+Modified Media Insights on AWS is a development framework for building serverless applications that process video, images, audio, and text  on AWS. It takes care of workflow orchestration and data persistence so that you can focus on workflow development. By addressing the concerns of running workflows, Media Insights on AWS empowers you to build applications faster with the benefit of inheriting a pre-built and robust back end.
 
 Media Insights on AWS has been successfully used in a variety of scenarios, such as:
 
