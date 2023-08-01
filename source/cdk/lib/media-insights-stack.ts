@@ -44,6 +44,8 @@ import { OperatorLibraryStack } from './operator-library';
 import { TestResourcesStack } from './media-insights-test-operations-stack';
 import { NagSuppressions } from 'cdk-nag';
 import * as util from './utils';
+import { OpenaiWhisperDeploymentStack } from './media-insights-openai-whisper';
+
 
 export interface MediaInsightsNestedStacks {
     readonly dataplaneApiStack: DataplaneApiStack,
@@ -51,6 +53,7 @@ export interface MediaInsightsNestedStacks {
     readonly analyticsStack: AnalyticsStack,
     readonly operatorLibraryStack: OperatorLibraryStack,
     readonly testResourcesStack: TestResourcesStack,
+    readonly openaiWhisperDeploymentStack: OpenaiWhisperDeploymentStack,
 }
 
 /**
@@ -1294,6 +1297,14 @@ export class MediaInsightsStack extends Stack {
         analyticsStack.node.addDependency(workflowApiStack);
         analyticsStack.node.addDependency(dataplaneApiStack);
 
+
+        const openaiWhisperDeploymentStack = new OpenaiWhisperDeploymentStack(this, 'OpenaiWhisper', {
+            parameters: {
+                botoConfig,
+            },
+        });
+
+
         const operatorLibraryStack = new OperatorLibraryStack(this, 'OperatorLibrary', {
             python39Layer,
             python38Layer,
@@ -1309,10 +1320,14 @@ export class MediaInsightsStack extends Stack {
                 CheckWaitOperationLambda: checkWaitOperationLambda.functionArn,
                 MediaConvertEndpoint: getMediaConvertEndpoint.getAttString('Data'),
                 Boto3UserAgent: botoConfig,
+                WhisperBucketName: Fn.importValue("OpenaiWhisper.BucketNameOutput"),
+                WhisperEndpointNameOutput: Fn.importValue("OpenaiWhisper.EndpointNameOutput"),
+                WhisperDynamodbTableName: Fn.importValue("OpenaiWhisper.DynamodbTableName"),
             },
         });
         operatorLibraryStack.addDependency(workflowApiStack);
         operatorLibraryStack.addDependency(dataplaneApiStack);
+        operatorLibraryStack.addDependency(openaiWhisperDeploymentStack);
 
         const testResourcesStack = new TestResourcesStack(this, 'TestResources', {
             python39Layer,
