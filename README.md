@@ -16,16 +16,9 @@ For additional details and sample use cases, refer to [How to Rapidly Prototype 
 
 This repository contains the Media Insights on AWS back-end framework. Users interact with the framework through REST APIs or by invoking Lambda functions directly. You will not find a graphical user interface (GUI) in this repository, but a reference application for Media Insights on AWS that includes a GUI is in the [Content Localization](https://github.com/aws-solutions/content-localization-on-aws) repository. 
 
-# Install
+Enhanced Language Support with OpenAI's Whisper:
+The modified version of the Content Localization on AWS project has also integrated OpenAI's Whisper for Arabic and Turkish models, providing exceptional transcription capabilities for these languages. This integration ensures a higher level of accuracy and efficiency in transcribing Arabic and Turkish audio content, which is essential for creating quality subtitles in these languages.
 
-You can deploy Media Insights on AWS in your AWS account with the following Cloud Formation templates. **The Cloud Formation stack name must be 12 or fewer characters long**.
-
-Region| Launch
-------|-----
-US West (Oregon) | [![Launch in us-west-2](docs/assets/images/launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=mi&templateURL=https://zeroandone-solutions.s3.us-west-2.amazonaws.com/content-localization-on-aws-modified/media-insights/v0.0/media-insights-stack.yaml)
-EU West (Ireland) | [![Launch in eu-west-1](docs/assets/images/launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=mi&templateURL=https://zero-and-one-solutions-eu-west-1.s3.eu-west-1.amazonaws.com/content-localization-on-aws-modified/media-insights/v0.0/media-insights-stack.yaml)
-
-The Cloud Formation options for these one-click deploys are described in the [installation parameters](#installation-parameters) section.
 
 ## Build from scratch:
 
@@ -56,24 +49,6 @@ If you're building applications on Media Insights on AWS then you will need to u
 * **WorkflowApiEndpoint** is the endpoint for accessing the Workflow APIs to create, update, delete and execute the workflows.
 * **WorkflowCustomResourceArn** is the custom resource that can be used to create workflows in CloudFormation scripts
 
-# Cost
-
-You are responsible for the cost of the AWS services used while running this solution. The cost for running this solution with the default settings in the us-east-1 (N. Virginia) region is approximately **$24 per month without free tiers**, or **$13 per month with free tiers** for 100 workflow runs. Most use cases are covered by the free tier for all AWS services except Amazon Kinesis and AWS Lambda. The costs for the Amazon Kinesis data stream ($12.56/mo) and the Workflow Scheduler lambda ($3.73/mo) will remain relatively unchanged, regardless of how many workflows execute.
-
-### Approximate monthly cost, excluding all free tiers:
-
-| AWS Service | Quantity | Cost |
-| --- | --- | --- |
-| Amazon API Gateway | 1 million workflows | $3.50 / mo |
-| Amazon Dynamo DB | 1 million workflows | $.025 / mo |
-| AWS Lambda | 100 workflows | $4.75 / mo |
-| Amazon Kinesis | 100 workflows | $12.56 / mo |
-| Amazon SQS | 1 million workflows | $0.40 / mo |
-| Amazon SNS | n/a | No charge |
-| Amazon S3 | 100 workflows | $2.3 / mo |
-| AWS Xray | 100 workflows | $.0005 / mo |
-
-These cost estimates are based on workflows processing live action videos 10 minutes in duration. Each additional 100 workflow executions will cost roughly $2, or higher for videos longer than 10 minutes and lower for videos shorter than 10 minutes.
 
 # Limitations
 
