@@ -112,6 +112,19 @@ export class OperatorLibraryStack extends NestedStack {
             description: "Boto3 user agent string",
         });
 
+        const whisperBucketName = new CfnParameter(this, 'WhisperBucketName', {
+            type: 'String',
+            description: "The name of the created S3 bucket",
+        });
+        const whisperEndpointNameOutput = new CfnParameter(this, 'WhisperEndpointNameOutput', {
+            type: 'String',
+            description: "The name of the deployed SageMaker endpoint",
+        });
+        const whisperDynamodbTableName = new CfnParameter(this, 'WhisperDynamodbTableName', {
+            type: 'String',
+            description: "The name of the created Dynamodb table",
+        });
+
 
         //
         // Cfn Conditions
@@ -1107,6 +1120,9 @@ export class OperatorLibraryStack extends NestedStack {
                 DataplaneEndpoint,
                 DATAPLANE_BUCKET,
                 botoConfig,
+                whisperEndpointNameOutput,
+                whisperDynamodbTableName
+
             }
         });
 
@@ -1119,6 +1135,7 @@ export class OperatorLibraryStack extends NestedStack {
                 DataplaneEndpoint,
                 DATAPLANE_BUCKET,
                 botoConfig,
+                whisperDynamodbTableName
             }
         });
 
@@ -1133,6 +1150,7 @@ export class OperatorLibraryStack extends NestedStack {
                 DataplaneEndpoint,
                 DATAPLANE_BUCKET,
                 botoConfig,
+                whisperDynamodbTableName
             }
         });
 

@@ -61,10 +61,10 @@ class WebCaptions:
 
             if "TranscribeSourceLanguage" in self.operator_object.input['MetaData']:
                 self.source_language_code = \
-                self.operator_object.input['MetaData']['TranscribeSourceLanguage'].split('-')[0]
+                    self.operator_object.input['MetaData']['TranscribeSourceLanguage'].split('-')[0]
             elif "TranslateSourceLanguage" in self.operator_object.input['MetaData']:
                 self.source_language_code = \
-                self.operator_object.input['MetaData']['TranslateSourceLanguage'].split('-')[0]
+                    self.operator_object.input['MetaData']['TranslateSourceLanguage'].split('-')[0]
             else:
                 # If TranscribeSourceLanguage is not available, then SourceLanguageCode
                 # must be present in the operator Configuration block.
@@ -528,6 +528,22 @@ class WebCaptions:
             raise MasExecutionError(self.operator_object.return_output_object())
 
 
+def convert_whisper_transcript(data):
+    result = []
+    segments = data.get('segments', [])
+
+    for segment in segments:
+        seg_data = {
+            'start': segment.get('start'),
+            'caption': segment.get('text'),
+            'wordConfidence': None,  # No word-level confidence available in the input
+            'end': segment.get('end'),
+        }
+        result.append(seg_data)
+
+    return result
+
+
 # Create web captions with line by line captions from the transcribe output
 def web_captions(event, context):
     print('type(event))')
@@ -546,24 +562,44 @@ def web_captions(event, context):
 
     webcaptions_object = WebCaptions(operator_object)
 
-    try:
-        transcript = webcaptions_object.GetTranscript()
-        webcaptions = webcaptions_object.TranscribeToWebCaptions(transcript)
-    except:
-        transcript = vttToWebCaptions(operator_object, webcaptions_object.existing_subtitles_object)
-        # Save the the original Transcribe generated captions to compare to any ground truth modifications
-        # made later so we can calculate quality metrics of the machine translation
-        # webcaptions_object.PutWebCaptions(webcaptions, source="TranscribeVideo")
-    # except:
-    # webcaptions = vttToWebCaptions(operator_object, webcaptions_object.existing_subtitles_object)
+    if "whisper" in event['Input']['MetaData']['TranscribeJobId']:
+        if "Audio" in event["Input"]["Media"]:
+            wbucket = event["Input"]["Media"]["Audio"]["S3Bucket"]
+            wkey = event["Input"]["Media"]["Audio"]["S3Key"]
+            wjob_id = event['Input']['MetaData']['TranscribeJobId']
+        elif "Video" in event["Input"]["Media"]:
+            wbucket = event["Input"]["Media"]["Video"]["S3Bucket"]
+            wkey = event["Input"]["Media"]["Video"]["S3Key"]
+            wjob_id = event['Input']['MetaData']['TranscribeJobId']
+        Key_path, _ = os.path.split(wkey)
+        wtranscribe_file_name = os.path.join(Key_path, f'{wjob_id}.json')
+        print('wtranscribe_file_name')
+        print(wtranscribe_file_name)
 
-    # if a vtt file was input, use that as the most recent version of the webcaptions file
-    if webcaptions_object.existing_subtitles:
-        print('operator_object')
-        print(operator_object)
-        print('webcaptions_object.existing_subtitles_object')
-        print(webcaptions_object.existing_subtitles_object)
-        webcaptions = vttToWebCaptions(operator_object, webcaptions_object.existing_subtitles_object)
+        data = s3.get_object(Bucket=wbucket, Key=wtranscribe_file_name)
+        json_data = data['Body'].read()
+        transcript = json.loads(json_data)
+        webcaptions = convert_whisper_transcript(transcript)
+
+    else:
+        try:
+            transcript = webcaptions_object.GetTranscript()
+            webcaptions = webcaptions_object.TranscribeToWebCaptions(transcript)
+        except:
+            transcript = vttToWebCaptions(operator_object, webcaptions_object.existing_subtitles_object)
+
+        # if a vtt file was input, use that as the most recent version of the webcaptions file
+        if webcaptions_object.existing_subtitles:
+            print('operator_object')
+            print(operator_object)
+            print('webcaptions_object.existing_subtitles_object')
+            print(webcaptions_object.existing_subtitles_object)
+            webcaptions = vttToWebCaptions(operator_object, webcaptions_object.existing_subtitles_object)
+
+    print('transcript')
+    print(transcript)
+    print('webcaptions')
+    print(webcaptions)
 
     webcaptions_object.PutWebCaptions(webcaptions)
 
@@ -772,7 +808,7 @@ def check_translate_webcaptions(event, context):
                 translateJobS3Uri = translateJobDescription["TextTranslationJobProperties"]["OutputDataConfig"]["S3Uri"]
                 translateJobUrl = urlparse(translateJobS3Uri, allow_fragments=False)
                 translateJobLanguageCode = \
-                translateJobDescription["TextTranslationJobProperties"]["TargetLanguageCodes"][0]
+                    translateJobDescription["TextTranslationJobProperties"]["TargetLanguageCodes"][0]
 
                 translateJobS3Location = {
                     "Uri": translateJobS3Uri,
@@ -783,7 +819,7 @@ def check_translate_webcaptions(event, context):
                 # use input web captions to convert translation output to web captions format
                 for outputS3ObjectKey in map(lambda s: s.key,
                                              s3_resource.Bucket(translateJobS3Location["Bucket"]).objects.filter(
-                                                     Prefix=translateJobS3Location["Key"] + "/", Delimiter="/")):
+                                                 Prefix=translateJobS3Location["Key"] + "/", Delimiter="/")):
                     print(
                         "Save translation for each output of job {} output {}".format(job["JobId"], outputS3ObjectKey))
 
